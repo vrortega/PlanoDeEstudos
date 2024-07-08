@@ -6,6 +6,7 @@
 //  Copyright © 2017 Eric Brito. All rights reserved.
 
 import UIKit
+import UserNotifications
 
 class StudyPlanViewController: UIViewController {
 
@@ -23,6 +24,17 @@ class StudyPlanViewController: UIViewController {
     @IBAction func schedule(_ sender: UIButton) {
         let id = String(Date().timeIntervalSince1970)
         let studyPlan = StudyPlan(course: tfCourse.text!, section: tfSection.text!, date: dpDate.date, done: false, id: id)
+        
+        let content = UNMutableNotificationContent()
+        content.title = "Lembrete"
+        content.subtitle = "Matéria: \(studyPlan.course)"
+        content.body = "Estudar \(studyPlan.section)"
+        content.categoryIdentifier = "Lembrete"
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 15, repeats: false)
+        
+        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
         
         sm.addPlan(studyPlan)
         navigationController!.popViewController(animated: true)
